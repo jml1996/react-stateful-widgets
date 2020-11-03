@@ -12,6 +12,8 @@ Find comments below to help you along.
 */
 
 import React from 'react';
+import { useState } from "react";
+
 
 // Use this variable ONLY to initialize a slice of state!
 // There is something in the JSX right now breaking this rule...
@@ -23,17 +25,23 @@ export const listOfAwesome = [
   { id: '5', name: 'Frances Allen' },
   { id: '6', name: 'Carol Shaw' },
 ];
+console.log(listOfAwesome["3"].name);
 
 export default function Programmers() {
   // We'll have to use the state hook twice, as we need two slices of state.
   // The programmers list on the one hand, and the id of the featured programmer on the other.
-
+  const [ listString ] = useState(listOfAwesome);
+  const [ idValue, setIdValue ] = useState(0);
+  
   const getNameOfFeatured = () => {
     // Leave this for last!
     // This is NOT an event handler but a helper function. See its usage inside the JSX.
     // It's going to utilize both slices of state to return the _name_ of the featured dev.
     // The beauty of closures is that we can "see" both slices of state from this region
     // of the program, without needing to inject the information through arguments.
+    const gottenName = listString[idValue-1].name;
+    return gottenName;
+    // setListString(list[id]);
   };
 
   const style = {
@@ -41,6 +49,8 @@ export default function Programmers() {
     marginTop: '0.5em',
     color: 'royalblue', // 🤔 color turns to gold, when celebrating
   };
+
+  idValue ? style.color = "gold" : style.color = "royalblue";
 
   return (
     <div className='widget-programmers container'>
@@ -50,10 +60,15 @@ export default function Programmers() {
           /* Nasty bug! We should map over a slice of state, instead of 'listOfAwesome'.
           We might think: "it works, though!" But if the list of programmers is not state,
           we could never add or edit programmers in the future. The list would be a static thing." */
-          listOfAwesome.map(dev =>
-            <div className='programmer' key={dev.id}>
-              {dev.name} <button onClick={() => { /* in here set the featured id to be dev.id */ }}>Feature</button>
-            </div>
+          // listString.map(dev =>
+            // <div className='programmer' key={dev.id}>
+            //   {dev.name} <button onClick={() => {setIdValue(dev.id)}}>Feature</button>
+            // </div>
+          // )
+          listString.map((item) =>
+          <div className='programmer' key={item.id}>
+            {item.name} <button onClick={() => setIdValue(item.id)}>Feature</button>
+          </div>
           )
         }
       </div>
@@ -62,9 +77,7 @@ export default function Programmers() {
           // Ternaries are fantastic to render "one thing or the other" depending on the "truthiness" of something.
           // Pseudo-code: if the currently featured id is truthy render text 1, otherwise render text 2.
           // Replace the hard-coded false with the correct variable.
-          false
-            ? `🎉 Let's celebrate ${getNameOfFeatured()}! 🥳`
-            : 'Pick an awesome programmer'
+          idValue ? `🎉 Let's celebrate ${getNameOfFeatured()}! 🥳` : 'Pick an awesome programmer'
         }
       </div>
     </div>
